@@ -1,12 +1,12 @@
-package io.camunda.connector.inbound;
+package io.camunda.connector.telegram.inbound;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LocalConnectorRuntime {
+public class TestApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(LocalConnectorRuntime.class, args);
+    SpringApplication.run(TestApplication.class, args);
   }
 }

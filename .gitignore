@@ -59,6 +59,7 @@ build/
 # environment
 .env
 request*.json
+application.properties
 
 # MacOS indexes
 .DS_Store

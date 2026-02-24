@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>connector-template-inbound</name>
-    <description>Camunda Inbound Connector Template</description>
+    <name>telegram-inbound-connector</name>
+    <description>Camunda Telegram Inbound Webhook Connector</description>
     <groupId>io.camunda.connector</groupId>
-    <artifactId>connector-template-inbound</artifactId>
+    <artifactId>telegram-inbound-connector</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
@@ -87,7 +87,6 @@
             <groupId>io.camunda.connector</groupId>
             <artifactId>spring-boot-starter-camunda-connectors</artifactId>
             <version>${version.connectors}</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -126,23 +125,18 @@
                 <configuration>
                     <connectors>
                         <connector>
-                            <connectorClass>io.camunda.connector.inbound.MyConnectorExecutable</connectorClass>
-                            <files>
-                                <file>
-                                    <templateId>io.camunda.connectors.inbound.EmailMessageStartEvent.v1</templateId>
-                                    <templateFileName>email-inbound-connector-start-event.json</templateFileName>
-                                </file>
-                                <file>
-                                    <templateId>io.camunda.connectors.inbound.EmailIntermediate.v1</templateId>
-                                    <templateFileName>email-inbound-connector-intermediate.json</templateFileName>
-                                </file>
-                                <file>
-                                    <templateId>io.camunda.connectors.inbound.EmailBoundary.v1</templateId>
-                                    <templateFileName>email-inbound-connector-boundary.json</templateFileName>
-                                </file>
-                            </files>
+                            <connectorClass>io.camunda.connector.telegram.inbound.TelegramInboundConnectorExecutable</connectorClass>
                         </connector>
                     </connectors>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <mainClass>io.camunda.connector.telegram.inbound.TestApplication</mainClass>
+                    <useTestClasspath>true</useTestClasspath>
                 </configuration>
             </plugin>
         </plugins>
