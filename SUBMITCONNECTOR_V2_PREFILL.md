@@ -25,9 +25,9 @@ https://jfk-1.tasklist.camunda.io/e0d3996c-b748-424b-9283-142ce53df946/tasklist/
 
 ## Listing Media
 
-- Link to App Listing Logo URL (>=512x512, no SVG): `<PUBLIC_LOGO_URL_512PNG>`
-- Link to App Profile Logo URL (>=230x230, no SVG): `<PUBLIC_LOGO_URL_230PNG>`
-- Link to Screenshots URL(s): `<PUBLIC_SCREENSHOTS_URL_OR_FOLDER>`
+- Link to App Listing Logo URL (>=512x512, no SVG): `https://raw.githubusercontent.com/deng-leon/telegram-connector/main/Logo.png`
+- Link to App Profile Logo URL (>=230x230, no SVG): `https://raw.githubusercontent.com/deng-leon/telegram-connector/main/Logo.png`
+- Link to Screenshots URL(s): `https://raw.githubusercontent.com/deng-leon/telegram-connector/main/Screenshots.png`
 - Link to Promo Video: `<PUBLIC_VIDEO_URL>`
 - Logo usage note for listing text/review comments:
   `Telegram logos are used for illustration only. This connector is not an official Telegram product and does not represent Telegram.`
