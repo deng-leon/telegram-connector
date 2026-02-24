@@ -1,0 +1,853 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Telegram Outbound Connector",
+  "id": "io.camunda.connectors.Telegram.v1",
+  "version": 4,
+  "description": "Comprehensive Telegram Connector to manage messages, chats, stickers, and bot settings using the Telegram Bot API.",
+  "metadata": {
+    "keywords": [
+      "telegram",
+      "bot",
+      "messages",
+      "chat",
+      "stickers"
+    ]
+  },
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PHN2ZyBpZD0iTGl2ZWxsb18xIiBkYXRhLW5hbWU9IkxpdmVsbG8gMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmlld0JveD0iMCAwIDI0MCAyNDAiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMTIwIiB5MT0iMjQwIiB4Mj0iMTIwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMWQ5M2QyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMzhiMGUzIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHRpdGxlPlRlbGVncmFtX2xvZ288L3RpdGxlPjxjaXJjbGUgY3g9IjEyMCIgY3k9IjEyMCIgcj0iMTIwIiBmaWxsPSJ1cmwoI2xpbmVhci1ncmFkaWVudCkiLz48cGF0aCBkPSJNODEuMjI5LDEyOC43NzJsMTQuMjM3LDM5LjQwNnMxLjc4LDMuNjg3LDMuNjg2LDMuNjg3LDMwLjI1NS0yOS40OTIsMzAuMjU1LTI5LjQ5MmwzMS41MjUtNjAuODlMODEuNzM3LDExOC42WiIgZmlsbD0iI2M4ZGFlYSIvPjxwYXRoIGQ9Ik0xMDAuMTA2LDEzOC44NzhsLTIuNzMzLDI5LjA0NnMtMS4xNDQsOC45LDcuNzU0LDAsMTcuNDE1LTE1Ljc2MywxNy40MTUtMTUuNzYzIiBmaWxsPSIjYTljNmQ4Ii8+PHBhdGggZD0iTTgxLjQ4NiwxMzAuMTc4LDUyLjIsMTIwLjYzNnMtMy41LTEuNDItMi4zNzMtNC42NGMuMjMyLS42NjQuNy0xLjIyOSwyLjEtMi4yLDYuNDg5LTQuNTIzLDEyMC4xMDYtNDUuMzYsMTIwLjEwNi00NS4zNnMzLjIwOC0xLjA4MSw1LjEtLjM2MmEyLjc2NiwyLjc2NiwwLDAsMSwxLjg4NSwyLjA1NSw5LjM1Nyw5LjM1NywwLDAsMSwuMjU0LDIuNTg1Yy0uMDA5Ljc1Mi0uMSwxLjQ0OS0uMTY5LDIuNTQyLS42OTIsMTEuMTY1LTIxLjQsOTQuNDkzLTIxLjQsOTQuNDkzcy0xLjIzOSw0Ljg3Ni01LjY3OCw1LjA0M0E4LjEzLDguMTMsMCwwLDEsMTQ2LjEsMTcyLjVjLTguNzExLTcuNDkzLTM4LjgxOS0yNy43MjctNDUuNDcyLTMyLjE3N2ExLjI3LDEuMjcsMCwwLDEtLjU0Ni0uOWMtLjA5My0uNDY5LjQxNy0xLjA1LjQxNy0xLjA1czUyLjQyNi00Ni42LDUzLjgyMS01MS40OTJjLjEwOC0uMzc5LS4zLS41NjYtLjg0OC0uNC0zLjQ4MiwxLjI4MS02My44NDQsMzkuNC03MC41MDYsNDMuNjA3QTMuMjEsMy4yMSwwLDAsMSw4MS40ODYsMTMwLjE3OFoiIGZpbGw9IiNmZmYiLz48L3N2Zz4="
+  },
+  "documentationRef": "https://core.telegram.org/bots/api",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:Task"
+  ],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "engines": {
+    "camunda": "^8.3"
+  },
+  "groups": [
+    {
+      "id": "operation",
+      "label": "Operation"
+    },
+    {
+      "id": "authentication",
+      "label": "Bot Authentication"
+    },
+    {
+      "id": "parameters",
+      "label": "Operation Parameters"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+
+    {
+      "label": "Bot Token",
+      "id": "botToken",
+      "group": "authentication",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "botToken"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "description": "Bot API token provided by @BotFather"
+    },
+    {
+      "label": "Operation Category",
+      "id": "operationGroup",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Getting Updates / Testing",
+          "value": "updates"
+        },
+        {
+          "name": "Messages",
+          "value": "messages"
+        },
+        {
+          "name": "Chat Management",
+          "value": "chat"
+        },
+        {
+          "name": "Updating Messages",
+          "value": "editing"
+        },
+        {
+          "name": "Stickers / Inline-Mode",
+          "value": "stickers_inline"
+        },
+        {
+          "name": "Payments / Games / Passport",
+          "value": "advanced"
+        },
+        {
+          "name": "Bot Settings",
+          "value": "settings"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operationGroup"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationUpdates",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Get Me (Test Token)",
+          "value": "getMe"
+        },
+        {
+          "name": "Log Out",
+          "value": "logOut"
+        },
+        {
+          "name": "Close",
+          "value": "close"
+        },
+        {
+          "name": "Get Webhook Info",
+          "value": "getWebhookInfo"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "updates"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationMessages",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Send Text Message",
+          "value": "sendMessage"
+        },
+        {
+          "name": "Forward Message",
+          "value": "forwardMessage"
+        },
+        {
+          "name": "Copy Message",
+          "value": "copyMessage"
+        },
+        {
+          "name": "Send Photo",
+          "value": "sendPhoto"
+        },
+        {
+          "name": "Send Audio",
+          "value": "sendAudio"
+        },
+        {
+          "name": "Send Document",
+          "value": "sendDocument"
+        },
+        {
+          "name": "Send Video",
+          "value": "sendVideo"
+        },
+        {
+          "name": "Send Animation",
+          "value": "sendAnimation"
+        },
+        {
+          "name": "Send Voice",
+          "value": "sendVoice"
+        },
+        {
+          "name": "Send Video Note",
+          "value": "sendVideoNote"
+        },
+        {
+          "name": "Send Media Group",
+          "value": "sendMediaGroup"
+        },
+        {
+          "name": "Send Location",
+          "value": "sendLocation"
+        },
+        {
+          "name": "Send Venue",
+          "value": "sendVenue"
+        },
+        {
+          "name": "Send Contact",
+          "value": "sendContact"
+        },
+        {
+          "name": "Send Poll",
+          "value": "sendPoll"
+        },
+        {
+          "name": "Send Dice",
+          "value": "sendDice"
+        },
+        {
+          "name": "Send Chat Action",
+          "value": "sendChatAction"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "messages"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationChat",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Ban Chat Member",
+          "value": "banChatMember"
+        },
+        {
+          "name": "Unban Chat Member",
+          "value": "unbanChatMember"
+        },
+        {
+          "name": "Restrict Chat Member",
+          "value": "restrictChatMember"
+        },
+        {
+          "name": "Promote Chat Member",
+          "value": "promoteChatMember"
+        },
+        {
+          "name": "Set Chat Photo",
+          "value": "setChatPhoto"
+        },
+        {
+          "name": "Delete Chat Photo",
+          "value": "deleteChatPhoto"
+        },
+        {
+          "name": "Set Chat Title",
+          "value": "setChatTitle"
+        },
+        {
+          "name": "Set Chat Description",
+          "value": "setChatDescription"
+        },
+        {
+          "name": "Pin Chat Message",
+          "value": "pinChatMessage"
+        },
+        {
+          "name": "Unpin Chat Message",
+          "value": "unpinChatMessage"
+        },
+        {
+          "name": "Unpin All Chat Messages",
+          "value": "unpinAllChatMessages"
+        },
+        {
+          "name": "Leave Chat",
+          "value": "leaveChat"
+        },
+        {
+          "name": "Get Chat",
+          "value": "getChat"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "chat"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationEditing",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Edit Message Text",
+          "value": "editMessageText"
+        },
+        {
+          "name": "Edit Message Caption",
+          "value": "editMessageCaption"
+        },
+        {
+          "name": "Edit Message Media",
+          "value": "editMessageMedia"
+        },
+        {
+          "name": "Edit Message Reply Markup",
+          "value": "editMessageReplyMarkup"
+        },
+        {
+          "name": "Stop Poll",
+          "value": "stopPoll"
+        },
+        {
+          "name": "Delete Message",
+          "value": "deleteMessage"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "editing"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationStickers",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Send Sticker",
+          "value": "sendSticker"
+        },
+        {
+          "name": "Get Sticker Set",
+          "value": "getStickerSet"
+        },
+        {
+          "name": "Create New Sticker Set",
+          "value": "createNewStickerSet"
+        },
+        {
+          "name": "Answer Inline Query",
+          "value": "answerInlineQuery"
+        },
+        {
+          "name": "Answer Web App Query",
+          "value": "answerWebAppQuery"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "stickers_inline"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operationSettings",
+      "group": "operation",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Set My Commands",
+          "value": "setMyCommands"
+        },
+        {
+          "name": "Delete My Commands",
+          "value": "deleteMyCommands"
+        },
+        {
+          "name": "Get My Commands",
+          "value": "getMyCommands"
+        },
+        {
+          "name": "Set My Name",
+          "value": "setMyName"
+        },
+        {
+          "name": "Get My Name",
+          "value": "getMyName"
+        },
+        {
+          "name": "Set My Description",
+          "value": "setMyDescription"
+        },
+        {
+          "name": "Get My Description",
+          "value": "getMyDescription"
+        },
+        {
+          "name": "Set My Short Description",
+          "value": "setMyShortDescription"
+        },
+        {
+          "name": "Get My Short Description",
+          "value": "getMyShortDescription"
+        }
+      ],
+      "condition": {
+        "property": "operationGroup",
+        "equals": "settings"
+      },
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+    {
+      "label": "Chat ID",
+      "id": "chat_id",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.chat_id"
+      },
+      "description": "Unique identifier for the target chat or username of the target channel",
+      "condition": {
+        "property": "operationGroup",
+        "oneOf": [
+          "messages",
+          "chat",
+          "editing",
+          "stickers_inline",
+          "advanced"
+        ]
+      }
+    },
+    {
+      "label": "Text",
+      "id": "text",
+      "group": "parameters",
+      "type": "Text",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.text"
+      },
+      "description": "Content of the message",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendMessage"
+      }
+    },
+    {
+      "label": "Caption",
+      "id": "caption",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.caption"
+      },
+      "description": "Media caption",
+      "condition": {
+        "property": "operationMessages",
+        "oneOf": [
+          "sendPhoto",
+          "sendAudio",
+          "sendDocument",
+          "sendVideo",
+          "sendAnimation",
+          "sendVoice"
+        ]
+      }
+    },
+    {
+      "label": "Parse Mode",
+      "id": "parse_mode",
+      "group": "parameters",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "None",
+          "value": ""
+        },
+        {
+          "name": "MarkdownV2",
+          "value": "MarkdownV2"
+        },
+        {
+          "name": "HTML",
+          "value": "HTML"
+        },
+        {
+          "name": "Markdown",
+          "value": "Markdown"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.parse_mode"
+      },
+      "condition": {
+        "property": "operationMessages",
+        "oneOf": [
+          "sendMessage",
+          "sendPhoto",
+          "sendAudio",
+          "sendDocument",
+          "sendVideo",
+          "sendAnimation",
+          "sendVoice"
+        ]
+      }
+    },
+    {
+      "label": "Photo",
+      "id": "photo",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.photo"
+      },
+      "description": "File ID or URL for the photo",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendPhoto"
+      }
+    },
+    {
+      "label": "Audio",
+      "id": "audio",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.audio"
+      },
+      "description": "File ID or URL for the audio",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendAudio"
+      }
+    },
+    {
+      "label": "Document",
+      "id": "document",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.document"
+      },
+      "description": "File ID or URL for the document",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendDocument"
+      }
+    },
+    {
+      "label": "Video",
+      "id": "video",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.video"
+      },
+      "description": "File ID or URL for the video",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendVideo"
+      }
+    },
+    {
+      "label": "Animation",
+      "id": "animation",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.animation"
+      },
+      "description": "File ID or URL for the animation",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendAnimation"
+      }
+    },
+    {
+      "label": "Voice",
+      "id": "voice",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.voice"
+      },
+      "description": "File ID or URL for the voice message",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendVoice"
+      }
+    },
+    {
+      "label": "Video Note",
+      "id": "video_note",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.video_note"
+      },
+      "description": "File ID or URL for the video note",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendVideoNote"
+      }
+    },
+    {
+      "label": "Sticker",
+      "id": "sticker",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.sticker"
+      },
+      "description": "File ID or URL for the sticker",
+      "condition": {
+        "property": "operationStickers",
+        "equals": "sendSticker"
+      }
+    },
+    {
+      "label": "User ID",
+      "id": "user_id",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.user_id"
+      },
+      "description": "Unique identifier of the target user",
+      "condition": {
+        "property": "operationGroup",
+        "equals": "chat"
+      }
+    },
+    {
+      "label": "Message ID",
+      "id": "message_id",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.message_id"
+      },
+      "description": "Required for editing/deleting/pinning messages",
+      "condition": {
+        "property": "operationGroup",
+        "equals": "editing"
+      }
+    },
+    {
+      "label": "Poll Question",
+      "id": "question",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.question"
+      },
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendPoll"
+      }
+    },
+    {
+      "label": "Poll Options",
+      "id": "options",
+      "group": "parameters",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.options"
+      },
+      "description": "JSON array of answer options ([ \"Option 1\", \"Option 2\" ])",
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendPoll"
+      }
+    },
+    {
+      "label": "Chat Action",
+      "id": "action",
+      "group": "parameters",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Typing",
+          "value": "typing"
+        },
+        {
+          "name": "Upload Photo",
+          "value": "upload_photo"
+        },
+        {
+          "name": "Record Video",
+          "value": "record_video"
+        },
+        {
+          "name": "Upload Video",
+          "value": "upload_video"
+        },
+        {
+          "name": "Record Voice",
+          "value": "record_voice"
+        },
+        {
+          "name": "Upload Voice",
+          "value": "upload_voice"
+        },
+        {
+          "name": "Upload Document",
+          "value": "upload_document"
+        },
+        {
+          "name": "Find Location",
+          "value": "find_location"
+        },
+        {
+          "name": "Record Video Note",
+          "value": "record_video_note"
+        },
+        {
+          "name": "Upload Video Note",
+          "value": "upload_video_note"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_params.action"
+      },
+      "condition": {
+        "property": "operationMessages",
+        "equals": "sendChatAction"
+      }
+    },
+    {
+      "label": "Reply Markup (JSON / FEEL)",
+      "id": "reply_markup",
+      "group": "parameters",
+      "type": "Text",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_reply_markup"
+      },
+      "description": "JSON object for keyboards, inline buttons, etc."
+    },
+    {
+      "label": "Other Parameters (JSON / FEEL)",
+      "id": "payload",
+      "group": "parameters",
+      "type": "Text",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "_payload"
+      },
+      "description": "Optional: Enter any other Telegram API parameters as a JSON object (this will override any fields filled above)."
+    },
+    {
+      "label": "Result variable",
+      "group": "output",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      },
+      "id": "result_variable"
+    },
+    {
+      "label": "Result expression",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "io.camunda:http-json:1",
+      "binding": {
+        "type": "zeebe:taskDefinition",
+        "property": "type"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "noAuth",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "authentication.type"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then replace(botToken, \"\\\"\", \"\") else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "= context merge([context merge(for entry in get entries(if _params = null then {} else _params) return if entry.value = null or entry.value = \"\" then {} else context put({}, entry.key, entry.value)), if _reply_markup = null then {} else if _reply_markup = \"\" then {} else context put({}, \"reply_markup\", _reply_markup), if _payload = null then {} else if _payload = \"\" then {} else _payload])",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "body"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "post",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "method"
+      }
+    }
+  ]
+}

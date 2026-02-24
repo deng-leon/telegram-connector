@@ -15,6 +15,11 @@ Telegram logos may be used for illustrative purposes (for example in documentati
 - Exposes incoming payload as `connectorData`
 - Supports Camunda SaaS auto URL detection and explicit base URL override
 
+## Included templates
+
+- Inbound templates are generated in [element-templates](element-templates).
+- Outbound template is included in [connectors/telegram-connector.json](connectors/telegram-connector.json).
+
 ## Connector configuration
 
 ### Required

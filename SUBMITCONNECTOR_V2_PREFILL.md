@@ -69,18 +69,18 @@ https://jfk-1.tasklist.camunda.io/e0d3996c-b748-424b-9283-142ce53df946/tasklist/
   `<RAW_BASE_URL>/connectors/telegram-connector.json`
 
 - Start Inbound Template URL (RAW):
-  `<RAW_BASE_URL>/connector-template-inbound/element-templates/telegram-inbound-connector-message-start-event.json`
+  `<RAW_BASE_URL>/element-templates/telegram-inbound-connector-message-start-event.json`
 
 - Intermediate Inbound Template URL (RAW):
-  `<RAW_BASE_URL>/connector-template-inbound/element-templates/telegram-inbound-connector-intermediate-catch-event.json`
+  `<RAW_BASE_URL>/element-templates/telegram-inbound-connector-intermediate-catch-event.json`
 
 - Boundary Inbound Template URL (RAW):
-  `<RAW_BASE_URL>/connector-template-inbound/element-templates/telegram-inbound-connector-boundary-event.json`
+  `<RAW_BASE_URL>/element-templates/telegram-inbound-connector-boundary-event.json`
 
 ## Support Links
 
 - Documentation Link URL:
-  `<PUBLIC_GITHUB_REPOSITORY_URL>/tree/main/connector-template-inbound/README.md`
+  `<PUBLIC_GITHUB_REPOSITORY_URL>/blob/main/README.md`
 - Support Link URL:
   `https://forum.camunda.io/`
 - Video Link URL:
