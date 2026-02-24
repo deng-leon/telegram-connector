@@ -15,9 +15,9 @@ https://jfk-1.tasklist.camunda.io/e0d3996c-b748-424b-9283-142ce53df946/tasklist/
 - Splash Title: `Automate Telegram Messaging And Webhooks`
 - Five-Word Description: `Send and receive Telegram events`
 - Description:
-  `Telegram Connector for Camunda supporting outbound bot operations (messaging, chat actions, media, and admin APIs) and inbound webhook-driven event triggers. Includes generated templates for start, intermediate catch, and boundary inbound events with correlation/output mapping options.`
+  `Telegram Connector for Camunda supporting outbound bot operations (messaging, chat actions, media, and admin APIs) and inbound webhook-driven event triggers. Includes generated templates for start, intermediate catch, and boundary inbound events with correlation/output mapping options. This connector is developed independently and is not affiliated with or officially representing Telegram.`
 - SEO Description:
-  `Camunda Telegram Connector enables end-to-end bot automation with outbound API actions and inbound webhook events. Model Telegram workflows in BPMN with reusable templates for start, intermediate, and boundary event use cases.`
+  `Camunda Telegram Connector enables end-to-end bot automation with outbound API actions and inbound webhook events. Independent community connector, not affiliated with or officially representing Telegram.`
 - Connector Type: `Inbound + Outbound`
 - Application Category: `<SELECT_IN_FORM>`
 - Industry: `<SELECT_IN_FORM>`
@@ -29,6 +29,8 @@ https://jfk-1.tasklist.camunda.io/e0d3996c-b748-424b-9283-142ce53df946/tasklist/
 - Link to App Profile Logo URL (>=230x230, no SVG): `<PUBLIC_LOGO_URL_230PNG>`
 - Link to Screenshots URL(s): `<PUBLIC_SCREENSHOTS_URL_OR_FOLDER>`
 - Link to Promo Video: `<PUBLIC_VIDEO_URL>`
+- Logo usage note for listing text/review comments:
+  `Telegram logos are used for illustration only. This connector is not an official Telegram product and does not represent Telegram.`
 
 ## Your Listing / Feature Section
 

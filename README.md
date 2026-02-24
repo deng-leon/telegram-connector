@@ -2,6 +2,12 @@
 
 Inbound Camunda connector that receives Telegram updates through webhooks and correlates them into process instances.
 
+## Trademark and affiliation notice
+
+This is an independent community connector and is not affiliated with, endorsed by, sponsored by, or officially representing Telegram.
+
+Telegram logos may be used for illustrative purposes (for example in documentation, diagrams, and "forward to Telegram" style references), but all materials should clearly indicate this project is not an official Telegram product.
+
 ## Features
 
 - Registers Telegram webhook on activation (`setWebhook`)
