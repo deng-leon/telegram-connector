@@ -71,7 +71,7 @@
   }, {
     "id" : "baseUrl",
     "label" : "Webhook Base URL (Optional)",
-    "description" : "Only required for Self-Managed or Local development. Leave blank for Camunda 8 SaaS.",
+    "description" : "Optional public base URL used for Telegram setWebhook registration.",
     "optional" : true,
     "group" : "configuration",
     "binding" : {

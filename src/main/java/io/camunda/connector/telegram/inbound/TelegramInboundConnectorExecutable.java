@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.connector.api.annotation.InboundConnector;
 import io.camunda.connector.api.inbound.Health;
 import io.camunda.connector.api.inbound.InboundConnectorContext;
+import io.camunda.connector.api.inbound.InboundConnectorExecutable;
 import io.camunda.connector.api.inbound.webhook.MappedHttpRequest;
 import io.camunda.connector.api.inbound.webhook.WebhookConnectorExecutable;
 import io.camunda.connector.api.inbound.webhook.WebhookHttpResponse;
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
       @ElementTemplate.PropertyGroup(id = "configuration", label = "Configuration")
     },
     inputDataClass = TelegramInboundConnectorProperties.class)
-public class TelegramInboundConnectorExecutable implements WebhookConnectorExecutable {
+public class TelegramInboundConnectorExecutable
+  implements WebhookConnectorExecutable, InboundConnectorExecutable<InboundConnectorContext> {
 
   private static final Logger LOG =
       LoggerFactory.getLogger(TelegramInboundConnectorExecutable.class);
@@ -64,13 +66,20 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
     }
 
     LOG.info("Activating Telegram Webhook Connector (context: {})", properties.inboundContext());
-    try {
-      registerWebhook();
-      context.reportHealth(Health.up());
-    } catch (Exception e) {
-      context.reportHealth(Health.down(e));
-      throw new RuntimeException("Failed to register Telegram webhook", e);
+
+    Map<String, String> env = System.getenv();
+    if (shouldRegisterWebhook(env)) {
+      try {
+        registerWebhook(env);
+      } catch (Exception e) {
+        context.reportHealth(Health.down(e));
+        throw new RuntimeException("Failed to register Telegram webhook", e);
+      }
+    } else {
+      LOG.info("No base URL configured. Skipping Telegram setWebhook registration in connector activation.");
     }
+
+    context.reportHealth(Health.up());
   }
 
   @Override
@@ -116,8 +125,12 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
     };
   }
 
-  private void registerWebhook() throws Exception {
-    String webhookUrl = constructWebhookUrl();
+  private boolean shouldRegisterWebhook(Map<String, String> env) {
+    return resolveWebhookBaseUrl(env) != null;
+  }
+
+  private void registerWebhook(Map<String, String> env) throws Exception {
+    String webhookUrl = constructWebhookUrl(env);
     LOG.info("Registering Telegram webhook for context {}", properties.inboundContext());
     callTelegramApi("setWebhook", "url=" + urlEncode(webhookUrl));
   }
@@ -149,24 +162,22 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
     }
   }
 
-  private String constructWebhookUrl() {
+  private String constructWebhookUrl(Map<String, String> env) {
     String inboundContext = normalizePathSegment(properties.inboundContext());
     if (inboundContext == null || inboundContext.isBlank()) {
       throw new IllegalArgumentException("Property inbound.context must not be empty");
     }
 
-    String baseUrl = resolveWebhookBaseUrl(System.getenv());
+    String baseUrl = resolveWebhookBaseUrl(env);
     if (baseUrl == null || baseUrl.isBlank()) {
       throw new IllegalStateException(
           "Cannot determine webhook base URL. Set 'baseUrl' in connector config or TELEGRAM_WEBHOOK_BASE_URL env var.");
     }
 
     String normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-
     if (normalizedBaseUrl.endsWith("/inbound/" + inboundContext)) {
       return normalizedBaseUrl;
     }
-
     return normalizedBaseUrl + "/inbound/" + inboundContext;
   }
 
@@ -175,11 +186,20 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
       return properties.baseUrl();
     }
 
-    String envBaseUrl = env.get("TELEGRAM_WEBHOOK_BASE_URL");
+    String envBaseUrl = firstNonBlank(env.get("TELEGRAM_WEBHOOK_BASE_URL"), System.getProperty("TELEGRAM_WEBHOOK_BASE_URL"));
     if (envBaseUrl != null && !envBaseUrl.isBlank()) {
       return envBaseUrl;
     }
 
+    return null;
+  }
+
+  private static String firstNonBlank(String... values) {
+    for (String value : values) {
+      if (value != null && !value.isBlank()) {
+        return value;
+      }
+    }
     return null;
   }
 

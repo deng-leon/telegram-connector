@@ -43,27 +43,69 @@ public class ConnectionTest {
   }
 
   @Test
-  void shouldUseConfiguredBaseUrlForWebhookConstruction() throws Exception {
+  void shouldRegisterWebhookWhenBaseUrlIsAvailable() throws Exception {
     TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
     TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
     setField(props, "inbound", Map.of("context", "telegram"));
     props.setBaseUrl("https://example.com");
     setField(executable, "properties", props);
 
-    String webhookUrl = (String) invokeNoArg(executable, "constructWebhookUrl");
+    boolean shouldRegister =
+        (boolean)
+            invokeSingleArg(
+                executable,
+                "shouldRegisterWebhook",
+                Map.of("CAMUNDA_CLIENT_MODE", "self-managed"));
 
-    assertThat(webhookUrl).isEqualTo("https://example.com/inbound/telegram");
+    assertThat(shouldRegister).isTrue();
   }
 
   @Test
-  void shouldFailWhenWebhookBaseUrlIsMissing() throws Exception {
+  void shouldRegisterWebhookInSaasWhenBaseUrlIsAvailable() throws Exception {
+    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
+    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
+    setField(props, "inbound", Map.of("context", "telegram"));
+    props.setBaseUrl("https://example.com");
+    setField(executable, "properties", props);
+
+    boolean shouldRegister =
+        (boolean)
+            invokeSingleArg(
+                executable,
+                "shouldRegisterWebhook",
+                Map.of("CAMUNDA_CLIENT_MODE", "saas"));
+
+    assertThat(shouldRegister).isTrue();
+  }
+
+  @Test
+  void shouldResolveBaseUrlFromEnvWhenPropertyMissing() throws Exception {
+    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
+    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
+    setField(props, "inbound", Map.of("context", "telegram"));
+    setField(executable, "properties", props);
+
+    String resolved =
+        (String)
+            invokeSingleArg(
+                executable,
+                "resolveWebhookBaseUrl",
+                Map.of("TELEGRAM_WEBHOOK_BASE_URL", "https://env.example.com"));
+
+    assertThat(resolved).isEqualTo("https://env.example.com");
+  }
+
+  @Test
+  void shouldFailWebhookUrlConstructionWhenBaseUrlMissing() throws Exception {
     TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
     TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
     setField(props, "inbound", Map.of("context", "telegram"));
     setField(executable, "properties", props);
 
     Exception exception =
-        Assertions.assertThrows(Exception.class, () -> invokeNoArg(executable, "constructWebhookUrl"));
+        Assertions.assertThrows(
+            Exception.class,
+            () -> invokeSingleArg(executable, "constructWebhookUrl", Map.of()));
 
     assertThat(exception.getCause()).isInstanceOf(IllegalStateException.class);
     assertThat(exception.getCause().getMessage())
@@ -76,9 +118,10 @@ public class ConnectionTest {
     field.set(target, value);
   }
 
-  private static Object invokeNoArg(Object target, String methodName) throws Exception {
-    var method = target.getClass().getDeclaredMethod(methodName);
+  private static Object invokeSingleArg(Object target, String methodName, Object arg)
+      throws Exception {
+    var method = target.getClass().getDeclaredMethod(methodName, Map.class);
     method.setAccessible(true);
-    return method.invoke(target);
+    return method.invoke(target, arg);
   }
 }

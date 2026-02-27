@@ -34,9 +34,10 @@ public class TelegramInboundConnectorProperties {
         id = "baseUrl",
         label = "Webhook Base URL (Optional)",
         group = "configuration",
-        description = "Only required for Self-Managed or Local development. Leave blank for Camunda 8 SaaS.",
+        description = "Optional public base URL used for Telegram setWebhook registration.",
         optional = true
     )
+    @JsonProperty("baseUrl")
     private String baseUrl;
 
     // Default constructor for Jackson
