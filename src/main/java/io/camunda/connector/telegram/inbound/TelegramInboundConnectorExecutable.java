@@ -75,14 +75,8 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
         LOG.info("Deactivating Telegram Webhook Connector (context: {})",
             properties != null ? properties.inboundContext() : "unknown");
 
-        try {
-            deregisterWebhook();
-        } catch (Exception e) {
-            LOG.warn("Failed to deregister Telegram webhook", e);
-        } finally {
-            if (context != null) {
-                context.reportHealth(Health.down());
-            }
+        if (context != null) {
+            context.reportHealth(Health.down());
         }
     }
 
@@ -122,13 +116,6 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
         String webhookUrl = constructWebhookUrl();
         LOG.info("Registering Telegram webhook for context {}", properties.inboundContext());
         callTelegramApi("setWebhook", "url=" + urlEncode(webhookUrl));
-    }
-
-    private void deregisterWebhook() throws Exception {
-        if (properties == null || properties.botToken() == null || properties.botToken().isBlank()) {
-            return;
-        }
-        callTelegramApi("deleteWebhook", "drop_pending_updates=true");
     }
 
     private void callTelegramApi(String operation, String query) throws Exception {
@@ -177,6 +164,10 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
         String normalizedBaseUrl = baseUrl.endsWith("/")
             ? baseUrl.substring(0, baseUrl.length() - 1)
             : baseUrl;
+
+        if (normalizedBaseUrl.endsWith("/inbound/" + inboundContext)) {
+            return normalizedBaseUrl;
+        }
         return normalizedBaseUrl + "/inbound/" + inboundContext;
     }
 
@@ -214,8 +205,8 @@ public class TelegramInboundConnectorExecutable implements WebhookConnectorExecu
 
         if (region != null && !region.isBlank() && clusterId != null && !clusterId.isBlank()) {
             LOG.info("Detected Camunda 8 SaaS environment (region={}, clusterId={})", region, clusterId);
-            return String.format("https://%s.connectors.camunda.io/%s/inbound/%s", 
-                region, clusterId, normalizePathSegment(properties.inboundContext()));
+            return String.format("https://%s.connectors.camunda.io/%s",
+                region, clusterId);
         }
 
         LOG.warn("Unable to detect Camunda SaaS base URL from environment/system properties");

@@ -2,7 +2,9 @@ package io.camunda.connector.telegram.inbound;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Properties;
 import org.junit.jupiter.api.Test;
 
 public class ConnectionTest {
@@ -38,5 +40,48 @@ public class ConnectionTest {
     assertThat(mapped.text()).isNull();
     assertThat(mapped.chatId()).isNull();
     assertThat(mapped.senderUsername()).isNull();
+  }
+
+  @Test
+  void shouldResolveSaasBaseUrlWithoutInboundSuffix() throws Exception {
+    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
+    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
+    setField(props, "inbound", Map.of("context", "telegram"));
+    setField(executable, "properties", props);
+
+    String baseUrl =
+        executable.resolveBaseUrl(
+            Map.of(
+                "CAMUNDA_CLIENT_CLOUD_REGION", "bru-2",
+                "CAMUNDA_CLIENT_CLOUD_CLUSTER_ID", "cluster-id-123"),
+            new Properties());
+
+    assertThat(baseUrl).isEqualTo("https://bru-2.connectors.camunda.io/cluster-id-123");
+  }
+
+  @Test
+  void shouldConstructWebhookUrlWithoutDoubleInbound() throws Exception {
+    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
+    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
+    props.setBaseUrl("https://bru-2.connectors.camunda.io/cluster-id-123/inbound/telegram");
+    setField(props, "inbound", Map.of("context", "telegram"));
+    setField(executable, "properties", props);
+
+    String webhookUrl = (String) invokeNoArg(executable, "constructWebhookUrl");
+
+    assertThat(webhookUrl)
+        .isEqualTo("https://bru-2.connectors.camunda.io/cluster-id-123/inbound/telegram");
+  }
+
+  private static void setField(Object target, String fieldName, Object value) throws Exception {
+    Field field = target.getClass().getDeclaredField(fieldName);
+    field.setAccessible(true);
+    field.set(target, value);
+  }
+
+  private static Object invokeNoArg(Object target, String methodName) throws Exception {
+    var method = target.getClass().getDeclaredMethod(methodName);
+    method.setAccessible(true);
+    return method.invoke(target);
   }
 }
