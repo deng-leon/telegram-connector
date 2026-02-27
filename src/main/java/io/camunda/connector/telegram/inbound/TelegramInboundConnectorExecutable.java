@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 @InboundConnector(name = "Telegram Webhook", type = "io.camunda:telegram-inbound:1")
 @ElementTemplate(
-    id = "io.camunda.connector.TelegramInbound.v1",
+    id = "io.camunda.connector.TelegramInbound.v2",
     name = "Telegram Inbound Connector",
-    version = 1,
+    version = 2,
     description = "Receives Telegram messages via Webhooks.",
     icon = "telegram.svg",
     propertyGroups = {

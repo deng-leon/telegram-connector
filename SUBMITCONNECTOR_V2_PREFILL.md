@@ -92,5 +92,5 @@ https://jfk-1.tasklist.camunda.io/e0d3996c-b748-424b-9283-142ce53df946/tasklist/
 
 - Inbound connector type: `io.camunda:telegram-inbound:1`
 - Outbound connector template id: `io.camunda.connectors.Telegram.v1`
-- Inbound template base id: `io.camunda.connector.TelegramInbound.v1`
+- Inbound template base id: `io.camunda.connector.TelegramInbound.v2`
 - Inbound module artifact: `io.camunda.connector:telegram-inbound-connector:1.0.0-SNAPSHOT`

@@ -1,12 +1,12 @@
 {
   "$schema" : "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
   "name" : "Telegram Inbound Connector (Start Event)",
-  "id" : "io.camunda.connector.TelegramInbound.v1:StartEvent",
+  "id" : "io.camunda.connector.TelegramInbound.v2:StartEvent",
   "description" : "Receives Telegram messages via Webhooks.",
   "metadata" : {
     "keywords" : [ ]
   },
-  "version" : 1,
+  "version" : 2,
   "category" : {
     "id" : "connectors",
     "name" : "Connectors"
