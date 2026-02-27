@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Properties;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ConnectionTest {
@@ -43,34 +43,31 @@ public class ConnectionTest {
   }
 
   @Test
-  void shouldResolveSaasBaseUrlWithoutInboundSuffix() throws Exception {
+  void shouldUseConfiguredBaseUrlForWebhookConstruction() throws Exception {
     TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
     TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
     setField(props, "inbound", Map.of("context", "telegram"));
-    setField(executable, "properties", props);
-
-    String baseUrl =
-        executable.resolveBaseUrl(
-            Map.of(
-                "CAMUNDA_CLIENT_CLOUD_REGION", "bru-2",
-                "CAMUNDA_CLIENT_CLOUD_CLUSTER_ID", "cluster-id-123"),
-            new Properties());
-
-    assertThat(baseUrl).isEqualTo("https://bru-2.connectors.camunda.io/cluster-id-123");
-  }
-
-  @Test
-  void shouldConstructWebhookUrlWithoutDoubleInbound() throws Exception {
-    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
-    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
-    props.setBaseUrl("https://bru-2.connectors.camunda.io/cluster-id-123/inbound/telegram");
-    setField(props, "inbound", Map.of("context", "telegram"));
+    props.setBaseUrl("https://example.com");
     setField(executable, "properties", props);
 
     String webhookUrl = (String) invokeNoArg(executable, "constructWebhookUrl");
 
-    assertThat(webhookUrl)
-        .isEqualTo("https://bru-2.connectors.camunda.io/cluster-id-123/inbound/telegram");
+    assertThat(webhookUrl).isEqualTo("https://example.com/inbound/telegram");
+  }
+
+  @Test
+  void shouldFailWhenWebhookBaseUrlIsMissing() throws Exception {
+    TelegramInboundConnectorExecutable executable = new TelegramInboundConnectorExecutable();
+    TelegramInboundConnectorProperties props = new TelegramInboundConnectorProperties();
+    setField(props, "inbound", Map.of("context", "telegram"));
+    setField(executable, "properties", props);
+
+    Exception exception =
+        Assertions.assertThrows(Exception.class, () -> invokeNoArg(executable, "constructWebhookUrl"));
+
+    assertThat(exception.getCause()).isInstanceOf(IllegalStateException.class);
+    assertThat(exception.getCause().getMessage())
+        .contains("Cannot determine webhook base URL");
   }
 
   private static void setField(Object target, String fieldName, Object value) throws Exception {
