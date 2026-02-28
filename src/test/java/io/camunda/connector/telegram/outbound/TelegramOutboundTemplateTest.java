@@ -4,15 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.camunda.connector.feel.FeelEngineWrapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -133,6 +137,86 @@ public class TelegramOutboundTemplateTest {
   }
 
   @Test
+  void shouldGenerateExpectedFeelModesForOptionalAndRequiredFields() throws Exception {
+    JsonNode properties = readTemplate().path("properties");
+
+    assertThat(findProperty(properties, "botToken").path("feel").asText()).isEqualTo("optional");
+    assertThat(findProperty(properties, "webhookUrl").path("feel").asText()).isEqualTo("optional");
+    assertThat(findProperty(properties, "chat_id").path("feel").asText()).isEqualTo("optional");
+    assertThat(findProperty(properties, "payload").path("feel").asText()).isEqualTo("optional");
+    assertThat(findProperty(properties, "reply_markup").path("feel").asText()).isEqualTo("optional");
+
+    assertThat(findProperty(properties, "resultExpression").path("feel").asText()).isEqualTo("required");
+    assertThat(findProperty(properties, "errorExpression").path("feel").asText()).isEqualTo("required");
+  }
+
+  @Test
+  void shouldNotEmitFeelForDisabledHiddenTransportFields() throws Exception {
+    JsonNode properties = readTemplate().path("properties");
+
+    assertThat(findProperty(properties, "authTypeHidden").has("feel")).isFalse();
+    assertThat(findProperty(properties, "urlHidden").has("feel")).isFalse();
+    assertThat(findProperty(properties, "bodyHidden").has("feel")).isFalse();
+    assertThat(findProperty(properties, "methodHidden").has("feel")).isFalse();
+
+    for (JsonNode property : properties) {
+      if (!property.has("feel")) {
+        continue;
+      }
+      assertThat(property.path("feel").asText()).isIn("optional", "required", "static");
+    }
+  }
+
+  @Test
+  void shouldEvaluateGeneratedUrlFeelScript() throws Exception {
+    JsonNode properties = readTemplate().path("properties");
+    String urlExpression = findProperty(properties, "urlHidden").path("value").asText();
+
+    FeelEngineWrapper feelEngine = new FeelEngineWrapper();
+
+    String resolvedUrl =
+        feelEngine.evaluate(
+            urlExpression,
+            String.class,
+        Map.of("botToken", "abc123", "operation", "sendMessage"));
+    assertThat(resolvedUrl).isEqualTo("https://api.telegram.org/botabc123/sendMessage");
+
+    String withoutOperation = feelEngine.evaluate(urlExpression, String.class, Map.of("botToken", "abc123"));
+    assertThat(withoutOperation).isEqualTo("https://api.telegram.org/botabc123/");
+  }
+
+  @Test
+  void shouldEvaluateGeneratedBodyFeelScript() throws Exception {
+    JsonNode properties = readTemplate().path("properties");
+    String bodyExpression = findProperty(properties, "bodyHidden").path("value").asText();
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("chat_id", "12345");
+    params.put("text", "hello");
+    params.put("emptyField", "");
+
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("disable_notification", true);
+
+    FeelEngineWrapper feelEngine = new FeelEngineWrapper();
+    Object result =
+        feelEngine.evaluate(
+            bodyExpression,
+            Map.of("_params", params, "_reply_markup", "{\"inline_keyboard\":[]}", "_payload", payload));
+
+    assertThat(result).isInstanceOf(Map.class);
+    @SuppressWarnings("unchecked")
+    Map<String, Object> body = (Map<String, Object>) result;
+
+    assertThat(body)
+        .containsEntry("chat_id", "12345")
+        .containsEntry("text", "hello")
+        .containsEntry("reply_markup", "{\"inline_keyboard\":[]}")
+        .containsEntry("disable_notification", true)
+        .doesNotContainKey("emptyField");
+  }
+
+  @Test
   void shouldExposeOperationSelectorsWithCorrectRoutingConditions() throws Exception {
     JsonNode properties = readTemplate().path("properties");
 
@@ -208,8 +292,24 @@ public class TelegramOutboundTemplateTest {
   }
 
   private static JsonNode readTemplate() throws Exception {
-    Path templatePath = Path.of("connectors", "telegram-connector.json");
+    Path templatePath = resolveModuleTemplatePath();
     return MAPPER.readTree(templatePath.toFile());
+  }
+
+  private static Path resolveModuleTemplatePath() {
+    Path moduleLocal = Path.of("connectors", "telegram-connector.json");
+    Path moduleMarker = Path.of("src", "main", "java");
+    if (Files.exists(moduleLocal) && Files.exists(moduleMarker)) {
+      return moduleLocal;
+    }
+
+    Path workspaceLocal = Path.of("connector-template-inbound", "connectors", "telegram-connector.json");
+    Path workspaceMarker = Path.of("connector-template-inbound", "src", "main", "java");
+    if (Files.exists(workspaceLocal) && Files.exists(workspaceMarker)) {
+      return workspaceLocal;
+    }
+
+    return moduleLocal;
   }
 
   private static JsonNode findProperty(JsonNode properties, String id) {

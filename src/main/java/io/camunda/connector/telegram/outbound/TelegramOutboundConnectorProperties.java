@@ -408,7 +408,7 @@ public class TelegramOutboundConnectorProperties {
       type = TemplateProperty.PropertyType.Hidden,
       feel = Property.FeelMode.disabled,
       defaultValue =
-          "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then replace(botToken, \"\\\\\"\", \"\") else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
+          "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then botToken else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
       binding = @TemplateProperty.PropertyBinding(name = "url"))
   private String urlHidden;
 

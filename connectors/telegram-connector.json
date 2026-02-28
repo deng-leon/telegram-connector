@@ -59,7 +59,7 @@
     "id" : "urlHidden",
     "label" : "Request URL",
     "optional" : false,
-    "value" : "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then replace(botToken, \"\\\\\"\", \"\") else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
+    "value" : "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then botToken else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
     "binding" : {
       "name" : "url",
       "type" : "zeebe:input"
