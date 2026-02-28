@@ -127,8 +127,31 @@
                         <connector>
                             <connectorClass>io.camunda.connector.telegram.inbound.TelegramInboundConnectorExecutable</connectorClass>
                         </connector>
+                        <connector>
+                            <connectorClass>io.camunda.connector.telegram.outbound.TelegramOutboundConnectorFunction</connectorClass>
+                        </connector>
                     </connectors>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>sync-telegram-outbound-template</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python3</executable>
+                            <arguments>
+                                <argument>${project.basedir}/scripts/sync_telegram_outbound_template.py</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
