@@ -1,6 +1,6 @@
 # Telegram Inbound Connector
 
-Inbound Camunda connector that receives Telegram updates through webhooks and correlates them into process instances.
+Telegram-focused inbound element templates that run on Camunda SaaS HTTP Webhook connector runtime.
 
 ## Trademark and affiliation notice
 
@@ -10,9 +10,9 @@ Telegram logos may be used for illustrative purposes (for example in documentati
 
 ## Features
 
-- Calls Telegram `setWebhook` during activation when a base URL is configured
-- Exposes incoming payload as `connectorData`
-- Uses runtime-managed webhook endpoint routing (`/inbound/{context}`)
+- Uses SaaS-native webhook connector type (`io.camunda:webhook:1`)
+- Generates Telegram-specific inbound element templates from Java annotations
+- Avoids custom inbound connector runtime execution code
 
 ## Included templates
 
@@ -23,23 +23,21 @@ Telegram logos may be used for illustrative purposes (for example in documentati
 
 ### Required
 
-- **Bot Token** (`botToken`)
 - **Webhook ID** (`inbound.context`)
 
-### Optional
+### Hardwired internal fields
 
-- **Webhook Base URL** (`baseUrl`)
-	- Enables automatic `setWebhook` registration when set
-- **Environment variable** `TELEGRAM_WEBHOOK_BASE_URL`
-	- Alternative to `baseUrl` for automatic registration
+- **Webhook subtype** (`inbound.subtype`)
+	- Hidden fixed template field set to `ConfigurableInboundWebhook`
+- **Webhook method** (`inbound.method`)
+	- Hidden fixed template field set to `post`
 
 ## Webhook registration
 
-This connector calls Telegram `setWebhook` from `activate()` when a base URL is provided (`baseUrl` or `TELEGRAM_WEBHOOK_BASE_URL`).
+This project does not perform webhook registration in Java runtime lifecycle hooks.
 
-- The Camunda runtime exposes the inbound endpoint at `/inbound/{inbound.context}`.
-- If no base URL is configured, the connector skips automatic `setWebhook` registration.
-- You can still register Telegram webhook manually if you prefer explicit control.
+- Configure and deploy the generated template in SaaS.
+- Use the webhook URL shown by Camunda to register Telegram manually.
 
 ### Register webhook manually via Telegram Bot API
 
@@ -64,12 +62,6 @@ curl "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/getWebhookInfo"
 curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/deleteWebhook"
 ```
 
-### Example automatic registration setup
-
-```bash
-export TELEGRAM_WEBHOOK_BASE_URL="https://<your-runtime-domain>"
-```
-
 ## Build
 
 ```bash
@@ -84,10 +76,10 @@ mvn clean test
 
 ## Local run
 
-1. Start Camunda 8 runtime with inbound connectors enabled.
-2. Set `baseUrl` or `TELEGRAM_WEBHOOK_BASE_URL` if you want automatic webhook registration; otherwise register Telegram webhook manually to `/inbound/{context}`.
-3. Configure `botToken` and `inbound.context` in your BPMN element template usage.
-4. Deploy your process and activate the connector.
+1. Import generated templates from `element-templates/` into Web Modeler.
+2. Apply Telegram inbound template on a Start Event or Intermediate Catch Event.
+3. Deploy to SaaS cluster.
+4. Copy webhook URL from Modeler and register it in Telegram Bot API.
 
 ## Security notes
 

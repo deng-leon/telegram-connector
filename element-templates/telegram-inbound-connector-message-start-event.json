@@ -6,7 +6,7 @@
   "metadata" : {
     "keywords" : [ ]
   },
-  "version" : 2,
+  "version" : 3,
   "category" : {
     "id" : "connectors",
     "name" : "Connectors"
@@ -17,9 +17,6 @@
     "eventDefinition" : "bpmn:MessageEventDefinition"
   },
   "groups" : [ {
-    "id" : "authentication",
-    "label" : "Authentication"
-  }, {
     "id" : "configuration",
     "label" : "Configuration"
   }, {
@@ -34,26 +31,34 @@
     "label" : "Output mapping"
   } ],
   "properties" : [ {
-    "value" : "io.camunda:telegram-inbound:1",
+    "value" : "io.camunda:webhook:1",
     "binding" : {
       "name" : "inbound.type",
       "type" : "zeebe:property"
     },
     "type" : "Hidden"
   }, {
-    "id" : "botToken",
-    "label" : "Bot Token",
-    "description" : "Your Telegram Bot token",
+    "id" : "inbound.subtype",
+    "label" : "Webhook subtype",
+    "description" : "Internal subtype for SaaS HTTP Webhook connector runtime.",
     "optional" : false,
-    "constraints" : {
-      "notEmpty" : true
-    },
-    "group" : "authentication",
+    "value" : "ConfigurableInboundWebhook",
     "binding" : {
-      "name" : "botToken",
+      "name" : "inbound.subtype",
       "type" : "zeebe:property"
     },
-    "type" : "String"
+    "type" : "Hidden"
+  }, {
+    "id" : "inbound.method",
+    "label" : "Webhook method",
+    "description" : "HTTP method restriction for webhook requests.",
+    "optional" : false,
+    "value" : "post",
+    "binding" : {
+      "name" : "inbound.method",
+      "type" : "zeebe:property"
+    },
+    "type" : "Hidden"
   }, {
     "id" : "inbound.context",
     "label" : "Webhook ID",
@@ -65,17 +70,6 @@
     "group" : "configuration",
     "binding" : {
       "name" : "inbound.context",
-      "type" : "zeebe:property"
-    },
-    "type" : "String"
-  }, {
-    "id" : "baseUrl",
-    "label" : "Webhook Base URL (Optional)",
-    "description" : "Optional public base URL used for Telegram setWebhook registration.",
-    "optional" : true,
-    "group" : "configuration",
-    "binding" : {
-      "name" : "baseUrl",
       "type" : "zeebe:property"
     },
     "type" : "String"

@@ -1,23 +1,12 @@
 package io.camunda.connector.telegram.inbound;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.camunda.connector.generator.java.annotation.TemplateProperty;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TelegramInboundConnectorProperties {
-
-    @NotEmpty 
-    @TemplateProperty(
-        id = "botToken",
-        label = "Bot Token",
-        group = "authentication",
-        description = "Your Telegram Bot token"
-    )
-    private String botToken;
 
     @TemplateProperty(
         id = "inbound.context",
@@ -26,25 +15,33 @@ public class TelegramInboundConnectorProperties {
         description = "The unique path of your webhook URL.",
         binding = @TemplateProperty.PropertyBinding(name = "inbound.context")
     )
-    @JsonProperty("inbound")
     @NotNull
     private Map<String, String> inbound;
 
     @TemplateProperty(
-        id = "baseUrl",
-        label = "Webhook Base URL (Optional)",
-        group = "configuration",
-        description = "Optional public base URL used for Telegram setWebhook registration.",
-        optional = true
+        id = "inbound.subtype",
+        label = "Webhook subtype",
+        description = "Internal subtype for SaaS HTTP Webhook connector runtime.",
+        type = TemplateProperty.PropertyType.Hidden,
+        defaultValue = "ConfigurableInboundWebhook",
+        binding = @TemplateProperty.PropertyBinding(name = "inbound.subtype"),
+        optional = false
     )
-    @JsonProperty("baseUrl")
-    private String baseUrl;
+    private String inboundSubtype;
+
+    @TemplateProperty(
+        id = "inbound.method",
+        label = "Webhook method",
+        description = "HTTP method restriction for webhook requests.",
+        type = TemplateProperty.PropertyType.Hidden,
+        defaultValue = "post",
+        binding = @TemplateProperty.PropertyBinding(name = "inbound.method"),
+        optional = false
+    )
+    private String inboundMethod;
 
     // Default constructor for Jackson
     public TelegramInboundConnectorProperties() {}
-
-    public String botToken() { return botToken; }
-    public void setBotToken(String botToken) { this.botToken = botToken; }
 
     public String inboundContext() {
         if (inbound != null && inbound.containsKey("context")) {
@@ -53,15 +50,12 @@ public class TelegramInboundConnectorProperties {
         return null;
     }
 
-    public String baseUrl() { return baseUrl; }
-    public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
-
     @Override
     public String toString() {
         return "TelegramInboundConnectorProperties{" +
-                "botToken='***', " +
                 "inboundContext='" + inboundContext() + '\'' +
-                ", baseUrl='" + baseUrl + '\'' +
+                ", inboundSubtype='" + inboundSubtype + '\'' +
+                ", inboundMethod='" + inboundMethod + '\'' +
                 '}';
     }
 }
