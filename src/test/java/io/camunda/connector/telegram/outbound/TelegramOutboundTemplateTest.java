@@ -4,7 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import java.nio.file.Path;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +18,25 @@ import org.junit.jupiter.api.Test;
 
 public class TelegramOutboundTemplateTest {
 
+  private static final String CAMUNDA_TEMPLATE_SCHEMA_URL =
+      "https://unpkg.com/@camunda/zeebe-element-templates-json-schema@0.36.0/resources/schema.json";
   private static final ObjectMapper MAPPER = new ObjectMapper();
+
+  @Test
+  void shouldValidateAgainstCamundaTemplateSchema() throws Exception {
+    JsonNode root = readTemplate();
+
+    JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
+    JsonSchema schema = schemaFactory.getSchema(URI.create(CAMUNDA_TEMPLATE_SCHEMA_URL));
+    Set<ValidationMessage> validationMessages = schema.validate(root);
+
+    assertThat(validationMessages)
+        .withFailMessage(
+            "Template does not match schema %s. Errors: %s",
+            CAMUNDA_TEMPLATE_SCHEMA_URL,
+            validationMessages)
+        .isEmpty();
+  }
 
   @Test
   void shouldExposeRegisterOperationGroupAndSetWebhookOperation() throws Exception {
@@ -67,7 +90,7 @@ public class TelegramOutboundTemplateTest {
     List<String> groups = new ArrayList<>();
     root.path("groups").forEach(group -> groups.add(group.path("id").asText()));
     assertThat(groups)
-        .containsExactly("operation", "authentication", "parameters", "connector", "output", "error", "retries");
+      .containsExactly("operation", "authentication", "parameters", "connector", "output", "error", "retries");
   }
 
   @Test
@@ -79,21 +102,28 @@ public class TelegramOutboundTemplateTest {
     assertThat(authType.path("type").asText()).isEqualTo("Hidden");
     assertThat(authType.path("binding").path("type").asText()).isEqualTo("zeebe:input");
     assertThat(authType.path("binding").path("name").asText()).isEqualTo("authentication.type");
+    assertThat(authType.has("feel")).isFalse();
     assertThat(authType.path("value").asText()).isEqualTo("noAuth");
 
     JsonNode urlHidden = findProperty(properties, "urlHidden");
     assertThat(urlHidden).isNotNull();
+    assertThat(urlHidden.path("type").asText()).isEqualTo("Hidden");
     assertThat(urlHidden.path("binding").path("name").asText()).isEqualTo("url");
+    assertThat(urlHidden.has("feel")).isFalse();
     assertThat(urlHidden.path("value").asText()).contains("https://api.telegram.org/bot");
 
     JsonNode bodyHidden = findProperty(properties, "bodyHidden");
     assertThat(bodyHidden).isNotNull();
+    assertThat(bodyHidden.path("type").asText()).isEqualTo("Hidden");
     assertThat(bodyHidden.path("binding").path("name").asText()).isEqualTo("body");
+    assertThat(bodyHidden.has("feel")).isFalse();
     assertThat(bodyHidden.path("value").asText()).contains("context merge");
 
     JsonNode methodHidden = findProperty(properties, "methodHidden");
     assertThat(methodHidden).isNotNull();
+    assertThat(methodHidden.path("type").asText()).isEqualTo("Hidden");
     assertThat(methodHidden.path("binding").path("name").asText()).isEqualTo("method");
+    assertThat(methodHidden.has("feel")).isFalse();
     assertThat(methodHidden.path("value").asText()).isEqualTo("post");
 
     JsonNode taskDefinitionType =

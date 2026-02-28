@@ -397,6 +397,7 @@ public class TelegramOutboundConnectorProperties {
       id = "authTypeHidden",
       label = "Authentication Type",
       type = TemplateProperty.PropertyType.Hidden,
+      feel = Property.FeelMode.disabled,
       defaultValue = "noAuth",
       binding = @TemplateProperty.PropertyBinding(name = "authentication.type"))
   private String authTypeHidden;
@@ -405,6 +406,7 @@ public class TelegramOutboundConnectorProperties {
       id = "urlHidden",
       label = "Request URL",
       type = TemplateProperty.PropertyType.Hidden,
+      feel = Property.FeelMode.disabled,
       defaultValue =
           "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then replace(botToken, \"\\\\\"\", \"\") else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
       binding = @TemplateProperty.PropertyBinding(name = "url"))
@@ -414,6 +416,7 @@ public class TelegramOutboundConnectorProperties {
       id = "bodyHidden",
       label = "Request Body",
       type = TemplateProperty.PropertyType.Hidden,
+      feel = Property.FeelMode.disabled,
       defaultValue =
           "= context merge([context merge(for entry in get entries(if _params = null then {} else _params) return if entry.value = null or entry.value = \"\" then {} else context put({}, entry.key, entry.value)), if _reply_markup = null then {} else if _reply_markup = \"\" then {} else context put({}, \"reply_markup\", _reply_markup), if _payload = null then {} else if _payload = \"\" then {} else _payload])",
       binding = @TemplateProperty.PropertyBinding(name = "body"))
@@ -423,6 +426,7 @@ public class TelegramOutboundConnectorProperties {
       id = "methodHidden",
       label = "Request Method",
       type = TemplateProperty.PropertyType.Hidden,
+      feel = Property.FeelMode.disabled,
       defaultValue = "post",
       binding = @TemplateProperty.PropertyBinding(name = "method"))
   private String methodHidden;

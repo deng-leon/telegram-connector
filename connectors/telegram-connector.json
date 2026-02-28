@@ -50,7 +50,6 @@
     "label" : "Authentication Type",
     "optional" : false,
     "value" : "noAuth",
-    "feel" : "optional",
     "binding" : {
       "name" : "authentication.type",
       "type" : "zeebe:input"
@@ -61,7 +60,6 @@
     "label" : "Request URL",
     "optional" : false,
     "value" : "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then replace(botToken, \"\\\\\"\", \"\") else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
-    "feel" : "optional",
     "binding" : {
       "name" : "url",
       "type" : "zeebe:input"
@@ -72,7 +70,6 @@
     "label" : "Request Body",
     "optional" : false,
     "value" : "= context merge([context merge(for entry in get entries(if _params = null then {} else _params) return if entry.value = null or entry.value = \"\" then {} else context put({}, entry.key, entry.value)), if _reply_markup = null then {} else if _reply_markup = \"\" then {} else context put({}, \"reply_markup\", _reply_markup), if _payload = null then {} else if _payload = \"\" then {} else _payload])",
-    "feel" : "optional",
     "binding" : {
       "name" : "body",
       "type" : "zeebe:input"
@@ -83,7 +80,6 @@
     "label" : "Request Method",
     "optional" : false,
     "value" : "post",
-    "feel" : "optional",
     "binding" : {
       "name" : "method",
       "type" : "zeebe:input"

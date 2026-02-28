@@ -184,6 +184,18 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>1.5.8</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>itu</artifactId>
+          <groupId>com.ethlo.time</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
@@ -193,6 +205,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <version.mockito>5.21.0</version.mockito>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <version.json-schema-validator>1.5.8</version.json-schema-validator>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.junit-jupiter>6.0.0</version.junit-jupiter>

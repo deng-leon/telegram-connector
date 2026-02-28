@@ -19,6 +19,7 @@
         <version.mockito>5.21.0</version.mockito>
         <version.junit-jupiter>6.0.0</version.junit-jupiter>
         <version.awaitility>4.3.0</version.awaitility>
+        <version.json-schema-validator>1.5.8</version.json-schema-validator>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -79,6 +80,13 @@
             <groupId>io.camunda</groupId>
             <artifactId>camunda-process-test-spring</artifactId>
             <version>${version.camunda}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${version.json-schema-validator}</version>
             <scope>test</scope>
         </dependency>
 
