@@ -167,6 +167,39 @@ public class TelegramOutboundTemplateTest {
     }
   }
 
+    @Test
+    void shouldPlaceDependentHiddenMappingsAfterTheirSourceInputs() throws Exception {
+    JsonNode properties = readTemplate().path("properties");
+
+    int botTokenIndex = findPropertyIndex(properties, "botToken");
+    int operationMessagesIndex = findPropertyIndex(properties, "operationMessages");
+    int payloadIndex = findPropertyIndex(properties, "payload");
+    int replyMarkupIndex = findPropertyIndex(properties, "reply_markup");
+
+    int urlHiddenIndex = findPropertyIndex(properties, "urlHidden");
+    int bodyHiddenIndex = findPropertyIndex(properties, "bodyHidden");
+
+    assertThat(botTokenIndex).isGreaterThanOrEqualTo(0);
+    assertThat(operationMessagesIndex).isGreaterThanOrEqualTo(0);
+    assertThat(payloadIndex).isGreaterThanOrEqualTo(0);
+    assertThat(replyMarkupIndex).isGreaterThanOrEqualTo(0);
+    assertThat(urlHiddenIndex).isGreaterThanOrEqualTo(0);
+    assertThat(bodyHiddenIndex).isGreaterThanOrEqualTo(0);
+
+    assertThat(urlHiddenIndex)
+      .withFailMessage("urlHidden must be emitted after botToken to access its mapped value at runtime")
+      .isGreaterThan(botTokenIndex);
+    assertThat(urlHiddenIndex)
+      .withFailMessage("urlHidden must be emitted after operation mappings to access operation at runtime")
+      .isGreaterThan(operationMessagesIndex);
+    assertThat(bodyHiddenIndex)
+      .withFailMessage("bodyHidden must be emitted after payload mapping to access _payload at runtime")
+      .isGreaterThan(payloadIndex);
+    assertThat(bodyHiddenIndex)
+      .withFailMessage("bodyHidden must be emitted after reply_markup mapping to access _reply_markup at runtime")
+      .isGreaterThan(replyMarkupIndex);
+    }
+
   @Test
   void shouldEvaluateGeneratedUrlFeelScript() throws Exception {
     JsonNode properties = readTemplate().path("properties");
@@ -183,6 +216,29 @@ public class TelegramOutboundTemplateTest {
 
     String withoutOperation = feelEngine.evaluate(urlExpression, String.class, Map.of("botToken", "abc123"));
     assertThat(withoutOperation).isEqualTo("https://api.telegram.org/botabc123/");
+
+    Map<String, Object> runtimeLikeContext = new HashMap<>();
+    runtimeLikeContext.put("botToken", "{{secrets.TELEGRAM_BOT_TOKEN}}");
+    runtimeLikeContext.put("operation", "sendChatAction");
+    runtimeLikeContext.put("operationGroup", "messages");
+    runtimeLikeContext.put("_params", null);
+    runtimeLikeContext.put("_payload", null);
+    runtimeLikeContext.put("_reply_markup", null);
+    runtimeLikeContext.put("authentication", Map.of("type", "noAuth"));
+    runtimeLikeContext.put("method", "post");
+    runtimeLikeContext.put("body", Map.of());
+
+    String withStringInputs = feelEngine.evaluate(urlExpression, String.class, runtimeLikeContext);
+    assertThat(withStringInputs)
+      .isEqualTo("https://api.telegram.org/bot{{secrets.TELEGRAM_BOT_TOKEN}}/sendChatAction");
+
+    String withConcreteToken =
+      feelEngine.evaluate(
+        urlExpression,
+        String.class,
+        Map.of("botToken", "1234567890:ABCDEF-abcdef", "operation", "sendChatAction"));
+    assertThat(withConcreteToken)
+      .isEqualTo("https://api.telegram.org/bot1234567890:ABCDEF-abcdef/sendChatAction");
   }
 
   @Test
@@ -319,6 +375,16 @@ public class TelegramOutboundTemplateTest {
       }
     }
     return null;
+  }
+
+  private static int findPropertyIndex(JsonNode properties, String id) {
+    for (int index = 0; index < properties.size(); index++) {
+      JsonNode property = properties.get(index);
+      if (id.equals(property.path("id").asText(null))) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   private static JsonNode findHiddenByBinding(

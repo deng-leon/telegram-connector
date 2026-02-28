@@ -396,6 +396,7 @@ public class TelegramOutboundConnectorProperties {
   @TemplateProperty(
       id = "authTypeHidden",
       label = "Authentication Type",
+      group = "authentication",
       type = TemplateProperty.PropertyType.Hidden,
       feel = Property.FeelMode.disabled,
       defaultValue = "noAuth",
@@ -405,16 +406,18 @@ public class TelegramOutboundConnectorProperties {
   @TemplateProperty(
       id = "urlHidden",
       label = "Request URL",
+      group = "parameters",
       type = TemplateProperty.PropertyType.Hidden,
       feel = Property.FeelMode.disabled,
       defaultValue =
-          "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then botToken else \"\") + \"/\" + (if is defined(operation) then operation else \"\")",
+          "= \"https://api.telegram.org/bot\" + (if is defined(botToken) then string(botToken) else \"\") + \"/\" + (if is defined(operation) then string(operation) else \"\")",
       binding = @TemplateProperty.PropertyBinding(name = "url"))
   private String urlHidden;
 
   @TemplateProperty(
       id = "bodyHidden",
       label = "Request Body",
+      group = "parameters",
       type = TemplateProperty.PropertyType.Hidden,
       feel = Property.FeelMode.disabled,
       defaultValue =
@@ -425,6 +428,7 @@ public class TelegramOutboundConnectorProperties {
   @TemplateProperty(
       id = "methodHidden",
       label = "Request Method",
+      group = "parameters",
       type = TemplateProperty.PropertyType.Hidden,
       feel = Property.FeelMode.disabled,
       defaultValue = "post",
